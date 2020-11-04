@@ -1,13 +1,12 @@
 package gateway;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 
-public class EchoClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
+public class EchoClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         DefaultFullHttpRequest httpRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_0, HttpMethod.GET, "/api/test");
@@ -18,8 +17,10 @@ public class EchoClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
-        System.out.println("client received : " + msg.toString(CharsetUtil.UTF_8));
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        FullHttpResponse httpResponse = (FullHttpResponse) msg;
+
+        System.out.println("client received : " +httpResponse.content());
         ctx.writeAndFlush(Unpooled.copiedBuffer("xiaofang !", CharsetUtil.UTF_8));
         ctx.close();
     }
