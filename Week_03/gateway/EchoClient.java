@@ -35,10 +35,10 @@ public class EchoClient {
                             ChannelPipeline pipeline = ch.pipeline();
                             pipeline.addLast(new HttpClientCodec());
                             pipeline.addLast(new HttpObjectAggregator(1024 * 1024));
-                            ch.pipeline().addLast(new EchoClientHandler());
+//                            ch.pipeline().addLast(new EchoClientHandler());
+                            ch.pipeline().addLast(new EchoHttpServerHandler());
                         }
                     })
-
             ;
             ChannelFuture f = b.connect().sync();
             f.channel().closeFuture().sync();

@@ -43,7 +43,10 @@ public class EchoServer {
                             ChannelPipeline pipeline = ch.pipeline();
                             pipeline.addLast("decoder", new HttpServerCodec());   //Http请求入站解码
                             pipeline.addLast(new HttpObjectAggregator(1024 * 1024));
+                            //普通http请求上游服务器
                             pipeline.addLast(new EchoServerHandler());
+                            //netty请求上游服务器
+                            pipeline.addLast(new EchoHttpServerHandler());
                         }
                     });
             ChannelFuture f = b.bind().sync();
