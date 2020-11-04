@@ -31,7 +31,6 @@ public class httpHandler extends ChannelInboundHandlerAdapter {
             Bootstrap b = new Bootstrap();
             b.group(group)
                     .channel(NioSocketChannel.class)
-                    .option(ChannelOption.SO_KEEPALIVE, true)
                     .remoteAddress(new InetSocketAddress(host, port))
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
@@ -58,9 +57,7 @@ public class httpHandler extends ChannelInboundHandlerAdapter {
                                     //添加响应正文
                                     response.content().writeBytes(Unpooled.wrappedBuffer(httpResponse.content()));
                                     //修改响应头
-                                    response.headers().set("Content-Type", "text/plain;charset=utf-8");
                                     response.headers().set("Content-Length", response.content().readableBytes());
-                                    response.headers().set("Connection", HttpHeaderValues.KEEP_ALIVE);
                                     response.headers().set("moon", "gogo");
 
                                     //发送 HttpResponse
