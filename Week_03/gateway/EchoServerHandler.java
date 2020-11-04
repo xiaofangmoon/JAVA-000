@@ -9,8 +9,6 @@ import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 
 import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
 
 
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
