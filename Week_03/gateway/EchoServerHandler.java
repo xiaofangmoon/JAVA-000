@@ -11,6 +11,9 @@ import io.netty.util.CharsetUtil;
 import java.util.HashMap;
 
 
+/**
+ * @author xiaofang
+ */
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {

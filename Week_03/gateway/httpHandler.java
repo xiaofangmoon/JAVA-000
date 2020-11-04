@@ -65,6 +65,7 @@ public class httpHandler extends ChannelInboundHandlerAdapter {
 
                                     //发送 HttpResponse
                                     originCtx.writeAndFlush(response);
+                                    originCtx.close();
                                 }
                             });
                         }
