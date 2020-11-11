@@ -3,6 +3,7 @@ package gateway;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.util.ReferenceCountUtil;
 
 
 /**
@@ -14,6 +15,7 @@ public class EchoHttpServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         httpHandler httpHandler = new httpHandler(8088, "127.0.0.1", ctx, (FullHttpRequest) msg);
         httpHandler.requestContent();
+        ReferenceCountUtil.release(msg);
     }
 
     @Override

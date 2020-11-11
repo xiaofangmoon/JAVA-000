@@ -7,6 +7,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.*;
+import io.netty.util.ReferenceCountUtil;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -62,6 +63,7 @@ public class httpHandler extends ChannelInboundHandlerAdapter {
 
                                     //发送 HttpResponse
                                     originCtx.writeAndFlush(response);
+                                    ReferenceCountUtil.release(msg);
                                     originCtx.close();
                                 }
                             });
