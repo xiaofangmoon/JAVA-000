@@ -2,6 +2,7 @@ package com.xiaofangmoon.springlearn.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.xiaofangmoon.demo.starter.service.HelloService;
+import com.xiaofangmoon.springlearn.aspect.MyCache;
 import com.xiaofangmoon.springlearn.entity.Person;
 import com.xiaofangmoon.springlearn.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class IndexController {
     }
 
     @GetMapping("/user")
+    @MyCache(10)
     public String user() {
         return JSON.toJSONString(user);
     }
