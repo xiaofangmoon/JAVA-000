@@ -1,0 +1,68 @@
+schemaName: sharding_master_slave_db
+
+dataSources:
+  ds0:
+    url: jdbc:mysql://10.211.55.6:3306/sharding_db_0?serverTimezone=UTC&useSSL=false
+    username: root
+    password: root
+  ds0_slave0:
+    url: jdbc:mysql://10.211.55.7:3306/sharding_db_0?serverTimezone=UTC&useSSL=false
+    username: root
+    password: root
+  ds0_slave1:
+    url: jdbc:mysql://10.211.55.8:3306/sharding_db_0?serverTimezone=UTC&useSSL=false
+    username: root
+    password: root
+  ds1:
+    url: jdbc:mysql://10.211.55.6:3306/sharding_db_1?serverTimezone=UTC&useSSL=false
+    username: root
+    password: root
+  ds1_slave0:
+    url: jdbc:mysql://10.211.55.7:3306/sharding_db_1?serverTimezone=UTC&useSSL=false
+    username: root
+    password: root
+  ds1_slave1:
+    url: jdbc:mysql://10.211.55.8:3306/sharding_db_1?serverTimezone=UTC&useSSL=false
+    username: root
+    password: root
+
+
+shardingRule:
+  tables:
+    t_order:
+      actualDataNodes: ms_ds${0..1}.t_order${0..1}
+      databaseStrategy:
+        inline:
+          shardingColumn: user_id
+          algorithmExpression: ms_ds${user_id % 2}
+      tableStrategy:
+        inline:
+          shardingColumn: order_id
+          algorithmExpression: t_order${order_id % 2}
+    t_order_item:
+      actualDataNodes: ms_ds${0..1}.t_order_item${0..1}
+      databaseStrategy:
+        inline:
+          shardingColumn: user_id
+          algorithmExpression: ms_ds${user_id % 2}
+      tableStrategy:
+        inline:
+          shardingColumn: order_id
+          algorithmExpression: t_order_item${order_id % 2}
+  bindingTables:
+    - t_order,t_order_item
+  broadcastTables:
+    - t_config
+
+
+  masterSlaveRules:
+    ms_ds0:
+      masterDataSourceName: ds0
+      slaveDataSourceNames:
+        - ds0_slave0
+        - ds0_slave1
+    ms_ds1:
+      masterDataSourceName: ds1
+      slaveDataSourceNames:
+        - ds1_slave0
+        - ds1_slave1

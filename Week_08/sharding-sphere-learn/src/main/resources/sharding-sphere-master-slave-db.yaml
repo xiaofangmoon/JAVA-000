@@ -1,0 +1,103 @@
+# 配置真实数据源
+dataSources:
+  # 配置第 1 个数据源
+  primary_0: !!com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds0?useSSL=false
+    username: root
+    password: Fang#123456
+  # 配置第 2 个数据源
+  primary_1: !!com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds1?useSSL=false
+    username: root
+    password: Fang#123456
+    # 配置第 1 个数据源
+  replica_ds_0_0: !!com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds0_r0?useSSL=false
+    username: root
+    password: Fang#123456
+  # 配置第 2 个数据源
+  replica_ds_0_1: !!com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds0_r1?useSSL=false
+    username: root
+    password: Fang#123456
+
+  replica_ds_1_0: !!com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds1_r0?useSSL=false
+    username: root
+    password: Fang#123456
+    # 配置第 2 个数据源
+  replica_ds_1_1: !!com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds1_r1?useSSL=false
+    username: root
+    password: Fang#123456
+rules:
+  - !REPLICA_QUERY
+    dataSources:
+      ds0:
+        name: ds0
+        primaryDataSourceName: primary_0
+        replicaDataSourceNames:
+          - replica_ds_0_0
+          - replica_ds_0_1
+        loadBalancerName: roundRobin
+      ds1:
+        name: ds1
+        primaryDataSourceName: primary_1
+        replicaDataSourceNames:
+          - replica_ds_1_0
+          - replica_ds_1_1
+        loadBalancerName: roundRobin
+    loadBalancers:
+      roundRobin:
+        type: ROUND_ROBIN
+  # 配置分片规则
+  - !SHARDING
+    tables:
+      # 配置 t_order 表规则
+      t_order:
+        actualDataNodes: ds${0..1}.t_order_${0..1}
+        # 配置分库策略
+        databaseStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: database_inline
+        # 配置分表策略
+        tableStrategy:
+          standard:
+            shardingColumn: order_id
+            shardingAlgorithmName: table_inline
+      t_order_item:
+        actualDataNodes: ds${0..1}.t_order_item_${0..1}
+        # 配置分库策略
+        databaseStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: database_inline
+        # 配置分表策略
+        tableStrategy:
+          standard:
+            shardingColumn: order_id
+            shardingAlgorithmName: t_order_item_inline
+      # 省略配置 t_order_item 表规则...
+      # ...
+
+    # 配置分片算法
+    shardingAlgorithms:
+      database_inline:
+        type: INLINE
+        props:
+          algorithm-expression: ds${user_id % 2}
+      table_inline:
+        type: INLINE
+        props:
+          algorithm-expression: t_order_${order_id % 2}
+      t_order_item_inline:
+        type: INLINE
+        props:
+          algorithm-expression: t_order_item_${order_id % 2}
