@@ -13,7 +13,7 @@
 - rpc-common : 解码器，请求和响应对象
 - rpc-register: 服务注册中心，居于zookeeper实现
 
-> 底层netty来同行 ，
+> 底层netty来通信 ，
 > zookeeper来作为注册中心
 
 ## 问题
